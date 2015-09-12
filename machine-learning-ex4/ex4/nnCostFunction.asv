@@ -81,12 +81,9 @@ end
 J = (1/m)*sum(sum(-1*y_labels.*log(h_theta)-(1-y_labels).*log(1-h_theta))); %cost function for neural network
 
 %regularization
-ot1 = Theta1(:,2:end);  % to ensure that the first term is not regularized
-ot2 = Theta2(:,2:end);
+ot1 = Theta1(:,2:end);
+ot2 = Theta2
 
-reg = (lambda/(2*m))*(sum(sum(ot1.^2))+sum(sum(ot2.^2)));
-
-J = J+reg;
 
 
 
