@@ -81,16 +81,51 @@ end
 J = (1/m)*sum(sum(-1*y_labels.*log(h_theta)-(1-y_labels).*log(1-h_theta))); %cost function for neural network
 
 %regularization
-ot1 = Theta1(:,2:end);
-ot2 = Theta2
+ot1 = Theta1(:,2:end);  % to ensure that the first term is not regularized
+ot2 = Theta2(:,2:end);
 
+reg = (lambda/(2*m))*(sum(sum(ot1.^2))+sum(sum(ot2.^2)));
 
-
-
-
-
-
+J = J+reg;
 % -------------------------------------------------------------
+
+for t=1:m
+    
+   % 1. forward pass
+   a1 = [1;X(t,:)'];   % a1 is made a column vector of size 401x1
+   
+   z2 = Theta1*a1;
+   a2 = sigmoid(z2);
+   a2 = [1;a2];
+   
+   z3 = Theta2*a2;
+   a3 = sigmoid(z3);
+   
+   % 2. Calculating delta for output layer
+   y_all = ([1:num_labels]==y(t));
+   
+   
+   delta_3 = a3-y_all';
+   
+   st = size(Theta2'*delta_3);
+   ss = size(sigmoidGradient(z2));
+   % 3. delta for the hidden layer l=2
+   delta_2 = (Theta2'*delta_3).*([1;sigmoidGradient(z2)]);
+   
+   delta_2 = delta_2(2:end);  % removing biasing term
+   
+   Theta1_grad = Theta1_grad+delta_2*a1';
+   Theta2_grad = Theta2_grad+delta_3*a2';
+      
+end
+
+Theta1_grad = (1/m)*Theta1_grad;
+Theta2_grad = (1/m)*Theta2_grad;
+
+% with regularization
+
+Theta1_grad = Theta1_grad(2:end);
+Theta2_grad = Theta2_grad(2:end);
 
 % =========================================================================
 
